@@ -35,7 +35,7 @@ export function AddEmployeeDialog({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
-    email: "",
+    phone_number: "",
     department: "",
     position: "",
     hire_date: "",
@@ -74,7 +74,7 @@ export function AddEmployeeDialog({
 
       setFormData({
         full_name: "",
-        email: "",
+        phone_number: "",
         department: "",
         position: "",
         hire_date: "",
@@ -114,15 +114,15 @@ export function AddEmployeeDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="email">อีเมล *</Label>
+              <Label htmlFor="phone_number">เบอร์โทรศัพท์</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
+                id="phone_number"
+                type="tel"
+                value={formData.phone_number}
                 onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
+                  setFormData({ ...formData, phone_number: e.target.value })
                 }
-                required
+                placeholder="0XX-XXX-XXXX"
               />
             </div>
 

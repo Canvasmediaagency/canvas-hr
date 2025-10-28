@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -56,18 +56,33 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
       return;
     }
 
+    // Update state immediately for instant UI feedback
     setEmployees(employees.filter((emp) => emp.id !== id));
+    // Also refresh from server to ensure consistency
+    await refreshEmployees();
     router.refresh();
   };
 
-  const handleAddSuccess = () => {
-    router.refresh();
+  const refreshEmployees = async () => {
+    const { data } = await supabase
+      .from("employees")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (data) {
+      setEmployees(data);
+    }
+  };
+
+  const handleAddSuccess = async () => {
+    await refreshEmployees();
     setIsAddOpen(false);
+    router.refresh();
   };
 
-  const handleEditSuccess = () => {
-    router.refresh();
+  const handleEditSuccess = async () => {
+    await refreshEmployees();
     setEditingEmployee(null);
+    router.refresh();
   };
 
   // Filter and search employees
@@ -85,7 +100,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
       filtered = filtered.filter(
         (emp) =>
           emp.full_name.toLowerCase().includes(query) ||
-          emp.email.toLowerCase().includes(query) ||
+          emp.phone_number?.toLowerCase().includes(query) ||
           emp.department?.toLowerCase().includes(query) ||
           emp.position?.toLowerCase().includes(query)
       );
@@ -102,7 +117,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
   }, [filteredEmployees, currentPage]);
 
   // Reset to page 1 when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, statusFilter]);
 
@@ -127,7 +142,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="ค้นหาชื่อ, อีเมล, แผนก, ตำแหน่ง..."
+            placeholder="ค้นหาชื่อ, เบอร์โทร, แผนก, ตำแหน่ง..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -147,12 +162,12 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border bg-white">
+      <div className="rounded-lg shadow-md bg-white border-0 p-5">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>ชื่อ-นามสกุล</TableHead>
-              <TableHead>อีเมล</TableHead>
+              <TableHead>เบอร์โทรศัพท์</TableHead>
               <TableHead>แผนก</TableHead>
               <TableHead>ตำแหน่ง</TableHead>
               <TableHead>วันเริ่มงาน</TableHead>
@@ -173,7 +188,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
               paginatedEmployees.map((employee) => (
                 <TableRow key={employee.id}>
                   <TableCell className="font-medium">{employee.full_name}</TableCell>
-                  <TableCell>{employee.email}</TableCell>
+                  <TableCell>{employee.phone_number || "-"}</TableCell>
                   <TableCell>{employee.department || "-"}</TableCell>
                   <TableCell>{employee.position || "-"}</TableCell>
                   <TableCell>

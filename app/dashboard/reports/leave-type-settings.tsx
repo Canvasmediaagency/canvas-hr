@@ -33,6 +33,17 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
           })
           .eq("id", leaveType.id);
       }
+
+      // Refresh data from server
+      const { data: updatedData } = await supabase
+        .from("leave_types")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (updatedData) {
+        setLeaveTypes(updatedData);
+      }
+
       setEditing(false);
       router.refresh();
       alert("บันทึกการตั้งค่าเรียบร้อยแล้ว");
@@ -58,13 +69,13 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
   };
 
   return (
-    <Card>
+    <Card className="shadow-md border-0">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>กำหนดวันลาแต่ละประเภท</CardTitle>
           {!editing ? (
-            <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-              <Pencil className="mr-2 h-4 w-4" />
+            <Button variant="outline" size="sm" onClick={() => setEditing(true)} className="gap-2">
+              <Pencil className="h-4 w-4" />
               แก้ไขโควต้า
             </Button>
           ) : (
@@ -74,12 +85,13 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
                 size="sm"
                 onClick={handleCancel}
                 disabled={saving}
+                className="gap-2"
               >
-                <X className="mr-2 h-4 w-4" />
+                <X className="h-4 w-4" />
                 ยกเลิก
               </Button>
-              <Button size="sm" onClick={handleSave} disabled={saving}>
-                <Save className="mr-2 h-4 w-4" />
+              <Button size="sm" onClick={handleSave} disabled={saving} className="gap-2">
+                <Save className="h-4 w-4" />
                 {saving ? "กำลังบันทึก..." : "บันทึก"}
               </Button>
             </div>
@@ -89,7 +101,7 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
       <CardContent>
         <div className="grid gap-4 md:grid-cols-3">
           {leaveTypes.map((type) => (
-            <div key={type.id} className="border rounded-lg p-4">
+            <div key={type.id} className={`rounded-lg p-4 transition-all ${editing ? 'shadow-md bg-blue-50' : 'shadow bg-white'}`}>
               <h3 className="font-semibold text-lg mb-1">{type.name}</h3>
               <p className="text-sm text-muted-foreground mb-3">
                 {type.description}
@@ -113,7 +125,6 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
                     {type.default_quota} วัน
                   </Badge>
                   <span className="text-sm text-muted-foreground">
-                    (โควต้ามาตรฐาน)
                   </span>
                 </div>
               )}

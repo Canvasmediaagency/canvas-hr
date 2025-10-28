@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -51,6 +51,20 @@ export function LeavesList({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const refreshLeaves = async () => {
+    const { data } = await supabase
+      .from("leave_records")
+      .select(`
+        *,
+        employees (full_name),
+        leave_types (name)
+      `)
+      .order("start_date", { ascending: false });
+    if (data) {
+      setLeaves(data as LeaveRecord[]);
+    }
+  };
+
   const handleDelete = async (id: string, employeeId: string, leaveTypeId: string, daysCount: number) => {
     if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบบันทึกการลานี้?")) {
       return;
@@ -83,13 +97,17 @@ export function LeavesList({
         .eq("id", quota.id);
     }
 
+    // Update state immediately
     setLeaves(leaves.filter((leave) => leave.id !== id));
+    // Refresh from server
+    await refreshLeaves();
     router.refresh();
   };
 
-  const handleAddSuccess = () => {
-    router.refresh();
+  const handleAddSuccess = async () => {
+    await refreshLeaves();
     setIsAddOpen(false);
+    router.refresh();
   };
 
   // Filter and search leaves
@@ -124,7 +142,7 @@ export function LeavesList({
   }, [filteredLeaves, currentPage]);
 
   // Reset to page 1 when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, leaveTypeFilter]);
 
@@ -171,7 +189,7 @@ export function LeavesList({
       </div>
 
       {/* Table */}
-      <div className="rounded-md border bg-white">
+      <div className="rounded-lg shadow-md bg-white border-0 p-5">
         <Table>
           <TableHeader>
             <TableRow>

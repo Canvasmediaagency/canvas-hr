@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -40,6 +40,16 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const refreshHolidays = async () => {
+    const { data } = await supabase
+      .from("company_holidays")
+      .select("*")
+      .order("date", { ascending: true });
+    if (data) {
+      setHolidays(data);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบวันหยุดนี้?")) {
       return;
@@ -56,13 +66,17 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
       return;
     }
 
+    // Update state immediately
     setHolidays(holidays.filter((holiday) => holiday.id !== id));
+    // Refresh from server
+    await refreshHolidays();
     router.refresh();
   };
 
-  const handleAddSuccess = () => {
-    router.refresh();
+  const handleAddSuccess = async () => {
+    await refreshHolidays();
     setIsAddOpen(false);
+    router.refresh();
   };
 
   // Filter and search holidays
@@ -97,7 +111,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
   }, [filteredHolidays, currentPage]);
 
   // Reset to page 1 when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, typeFilter]);
 
@@ -141,7 +155,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border bg-white">
+      <div className="rounded-lg shadow-md bg-white border-0 p-5">
         <Table>
           <TableHeader>
             <TableRow>

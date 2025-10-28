@@ -66,11 +66,11 @@ export default async function ReportsPage() {
       </div>
 
       {/* รายงานการใช้วันลาของพนักงาน */}
-      <Card>
+      <Card className="shadow-md border-0">
         <CardHeader>
           <CardTitle>สรุปการใช้วันลาของพนักงาน</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {employees.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">
               ยังไม่มีข้อมูลพนักงาน
@@ -78,7 +78,7 @@ export default async function ReportsPage() {
           ) : (
             <div className="space-y-6">
               {employees.map((employee: any) => (
-                <div key={employee.id} className="border rounded-lg p-4">
+                <div key={employee.id} className="shadow hover:shadow-md rounded-lg p-5 bg-white transition-shadow">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="font-semibold text-lg">

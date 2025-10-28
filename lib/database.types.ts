@@ -96,10 +96,11 @@ export type Database = {
         Row: {
           created_at: string | null
           department: string | null
-          email: string
+          email: string | null
           full_name: string
           hire_date: string
           id: string
+          phone_number: string | null
           position: string | null
           status: string
           updated_at: string | null
@@ -107,10 +108,11 @@ export type Database = {
         Insert: {
           created_at?: string | null
           department?: string | null
-          email: string
+          email?: string | null
           full_name: string
           hire_date: string
           id?: string
+          phone_number?: string | null
           position?: string | null
           status?: string
           updated_at?: string | null
@@ -118,10 +120,11 @@ export type Database = {
         Update: {
           created_at?: string | null
           department?: string | null
-          email?: string
+          email?: string | null
           full_name?: string
           hire_date?: string
           id?: string
+          phone_number?: string | null
           position?: string | null
           status?: string
           updated_at?: string | null

@@ -40,7 +40,7 @@ export function EditEmployeeDialog({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: employee.full_name,
-    email: employee.email,
+    phone_number: employee.phone_number || "",
     department: employee.department || "",
     position: employee.position || "",
     hire_date: employee.hire_date,
@@ -93,15 +93,15 @@ export function EditEmployeeDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_email">อีเมล *</Label>
+              <Label htmlFor="edit_phone_number">เบอร์โทรศัพท์</Label>
               <Input
-                id="edit_email"
-                type="email"
-                value={formData.email}
+                id="edit_phone_number"
+                type="tel"
+                value={formData.phone_number}
                 onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
+                  setFormData({ ...formData, phone_number: e.target.value })
                 }
-                required
+                placeholder="0XX-XXX-XXXX"
               />
             </div>
 

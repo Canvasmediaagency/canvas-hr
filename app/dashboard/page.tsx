@@ -63,7 +63,7 @@ export default async function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-white">
+        <Card className="bg-gradient-to-br from-blue-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               พนักงานทั้งหมด
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-white">
+        <Card className="bg-gradient-to-br from-purple-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               บันทึกการลา
@@ -99,7 +99,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-white">
+        <Card className="bg-gradient-to-br from-orange-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               วันหยุดบริษัท
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-white">
+        <Card className="bg-gradient-to-br from-green-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               วันหยุดถัดไป
@@ -139,7 +139,7 @@ export default async function DashboardPage() {
       {/* Recent Activity and Upcoming Holidays */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Recent Leaves */}
-        <Card>
+        <Card className="shadow-md border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-purple-600" />
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
                 {stats.recentLeaves.map((leave: any) => (
                   <div
                     key={leave.id}
-                    className="flex items-start justify-between p-3 rounded-lg border bg-gray-50 hover:bg-gray-100 transition-colors"
+                    className="flex items-start justify-between p-3 rounded-lg shadow hover:shadow-md bg-white transition-all"
                   >
                     <div className="space-y-1">
                       <p className="text-sm font-medium">
@@ -185,7 +185,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Upcoming Holidays */}
-        <Card>
+        <Card className="shadow-md border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarDays className="h-5 w-5 text-orange-600" />
@@ -202,7 +202,7 @@ export default async function DashboardPage() {
                 {stats.upcomingHolidays.map((holiday: any) => (
                   <div
                     key={holiday.id}
-                    className="flex items-start justify-between p-3 rounded-lg border bg-gray-50 hover:bg-gray-100 transition-colors"
+                    className="flex items-start justify-between p-3 rounded-lg shadow hover:shadow-md bg-white transition-all"
                   >
                     <div className="space-y-1">
                       <p className="text-sm font-medium">{holiday.name}</p>
