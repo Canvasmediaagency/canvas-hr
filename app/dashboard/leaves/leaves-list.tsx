@@ -28,7 +28,7 @@ import { useRouter } from "next/navigation";
 type Employee = Tables<"employees">;
 type LeaveType = Tables<"leave_types">;
 type LeaveRecord = Tables<"leave_records"> & {
-  employees: { full_name: string; email: string } | null;
+  employees: { full_name: string } | null;
   leave_types: { name: string } | null;
 };
 
@@ -125,7 +125,6 @@ export function LeavesList({
       filtered = filtered.filter(
         (leave) =>
           leave.employees?.full_name.toLowerCase().includes(query) ||
-          leave.employees?.email.toLowerCase().includes(query) ||
           leave.leave_types?.name.toLowerCase().includes(query) ||
           leave.reason?.toLowerCase().includes(query)
       );
