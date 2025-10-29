@@ -167,9 +167,10 @@ export function AddLeaveDialog({
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="start_date">วันที่เริ่ม *</Label>
-                <Input
+                <input
                   id="start_date"
                   type="date"
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   value={formData.start_date}
                   onChange={(e) =>
                     setFormData({ ...formData, start_date: e.target.value })
@@ -180,9 +181,10 @@ export function AddLeaveDialog({
 
               <div className="grid gap-2">
                 <Label htmlFor="end_date">วันที่สิ้นสุด *</Label>
-                <Input
+                <input
                   id="end_date"
                   type="date"
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   value={formData.end_date}
                   onChange={(e) =>
                     setFormData({ ...formData, end_date: e.target.value })

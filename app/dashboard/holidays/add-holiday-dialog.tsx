@@ -99,9 +99,10 @@ export function AddHolidayDialog({
 
             <div className="grid gap-2">
               <Label htmlFor="date">วันที่ *</Label>
-              <Input
+              <input
                 id="date"
                 type="date"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 value={formData.date}
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
