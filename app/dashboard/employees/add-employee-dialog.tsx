@@ -91,84 +91,91 @@ export function AddEmployeeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px] rounded-2xl">
         <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>เพิ่มพนักงานใหม่</DialogTitle>
-            <DialogDescription>
-              กรอกข้อมูลพนักงานใหม่ที่ต้องการเพิ่มเข้าสู่ระบบ
-            </DialogDescription>
+          <DialogHeader className="space-y-3 pb-4">
+            <DialogTitle className="text-2xl font-bold text-gray-900">เพิ่มพนักงานใหม่</DialogTitle>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-5 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="full_name">ชื่อ-นามสกุล *</Label>
+              <Label htmlFor="full_name" className="text-sm font-semibold text-gray-700">ชื่อ-นามสกุล *</Label>
               <Input
                 id="full_name"
                 value={formData.full_name}
                 onChange={(e) =>
                   setFormData({ ...formData, full_name: e.target.value })
                 }
+                className="rounded-xl border-gray-200 h-11"
+                placeholder="กรอกชื่อ-นามสกุล"
                 required
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="nickname">ชื่อเล่น</Label>
+              <Label htmlFor="nickname" className="text-sm font-semibold text-gray-700">ชื่อเล่น</Label>
               <Input
                 id="nickname"
                 value={formData.nickname}
                 onChange={(e) =>
                   setFormData({ ...formData, nickname: e.target.value })
                 }
+                className="rounded-xl border-gray-200 h-11"
+                placeholder="กรอกชื่อเล่น"
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="birthday">วันเกิด</Label>
-              <Input
-                id="birthday"
-                type="date"
-                value={formData.birthday}
-                onChange={(e) =>
-                  setFormData({ ...formData, birthday: e.target.value })
-                }
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="birthday" className="text-sm font-semibold text-gray-700">วันเกิด</Label>
+                <input
+                  id="birthday"
+                  type="date"
+                  value={formData.birthday}
+                  onChange={(e) =>
+                    setFormData({ ...formData, birthday: e.target.value })
+                  }
+                  className="flex h-11 w-full rounded-xl border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="hire_date" className="text-sm font-semibold text-gray-700">วันเริ่มงาน *</Label>
+                <input
+                  id="hire_date"
+                  type="date"
+                  value={formData.hire_date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, hire_date: e.target.value })
+                  }
+                  className="flex h-11 w-full rounded-xl border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="department">แผนก</Label>
+              <Label htmlFor="department" className="text-sm font-semibold text-gray-700">แผนก</Label>
               <Input
                 id="department"
                 value={formData.department}
                 onChange={(e) =>
                   setFormData({ ...formData, department: e.target.value })
                 }
+                className="rounded-xl border-gray-200 h-11"
+                placeholder="กรอกแผนก"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="hire_date">วันเริ่มงาน *</Label>
-              <Input
-                id="hire_date"
-                type="date"
-                value={formData.hire_date}
-                onChange={(e) =>
-                  setFormData({ ...formData, hire_date: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="status">สถานะ</Label>
+              <Label htmlFor="status" className="text-sm font-semibold text-gray-700">สถานะ</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value: "active" | "inactive" | "terminated") =>
                   setFormData({ ...formData, status: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded-xl border-gray-200 h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -180,16 +187,21 @@ export function AddEmployeeDialog({
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className="rounded-xl border-gray-200 h-11"
             >
               ยกเลิก
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="rounded-xl h-11 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 shadow-lg shadow-slate-500/20 text-white"
+            >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </Button>
           </DialogFooter>

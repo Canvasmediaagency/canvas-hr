@@ -11,7 +11,7 @@ async function getData() {
       .from("leave_records")
       .select(`
         *,
-        employees (full_name),
+        employees (full_name, nickname),
         leave_types (name)
       `)
       .order("created_at", { ascending: false }),

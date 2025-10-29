@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -19,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Filter, Pencil } from "lucide-react";
+import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Pencil, Calendar } from "lucide-react";
 import { AddLeaveDialog } from "./add-leave-dialog";
 import { EditLeaveDialog } from "./edit-leave-dialog";
 import { supabase } from "@/lib/supabase";
@@ -29,7 +30,7 @@ import { useRouter } from "next/navigation";
 type Employee = Tables<"employees">;
 type LeaveType = Tables<"leave_types">;
 type LeaveRecord = Tables<"leave_records"> & {
-  employees: { full_name: string } | null;
+  employees: { full_name: string; nickname: string | null } | null;
   leave_types: { name: string } | null;
 };
 
@@ -58,7 +59,7 @@ export function LeavesList({
       .from("leave_records")
       .select(`
         *,
-        employees (full_name),
+        employees (full_name, nickname),
         leave_types (name)
       `)
       .order("start_date", { ascending: false });
@@ -148,118 +149,165 @@ export function LeavesList({
     return filteredLeaves.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredLeaves, currentPage]);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
+  // Handler for search with page reset
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
     setCurrentPage(1);
-  }, [searchQuery, leaveTypeFilter]);
+  };
+
+  const handleFilterChange = (value: string) => {
+    setLeaveTypeFilter(value);
+    setCurrentPage(1);
+  };
 
   return (
-    <div className="space-y-4">
-      {/* Header with Add Button */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-lg font-semibold">บันทึกการลา</h3>
-          <p className="text-sm text-muted-foreground">
-            แสดง {paginatedLeaves.length} จาก {filteredLeaves.length} รายการ
-          </p>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-10 w-10 rounded-xl bg-linear-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-lg shadow-slate-500/20">
+                <Calendar className="h-5 w-5 text-white" strokeWidth={2.5} />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">บันทึกการลา</h2>
+            </div>
+            <p className="text-sm text-gray-500 ml-13">
+              แสดง {paginatedLeaves.length} จาก {filteredLeaves.length} รายการ
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => setIsAddOpen(true)}
+              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white"
+            >
+              <Plus className="h-4 w-4" />
+              บันทึกการลา
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setIsAddOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          บันทึกการลา
-        </Button>
-      </div>
 
-      {/* Search and Filter Section */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="ค้นหาชื่อพนักงาน, อีเมล, เหตุผล..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
+        {/* Search and Filter Section */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="ค้นหาชื่อพนักงาน, เหตุผล..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-9 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white"
+            />
+          </div>
+          <Select value={leaveTypeFilter} onValueChange={handleFilterChange}>
+            <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-gray-200">
+              <SelectValue placeholder="ประเภทการลาทั้งหมด" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ประเภทการลาทั้งหมด</SelectItem>
+              {leaveTypes.map((type) => (
+                <SelectItem key={type.id} value={type.id}>
+                  {type.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <Select value={leaveTypeFilter} onValueChange={setLeaveTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="ประเภทการลาทั้งหมด" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">ประเภทการลาทั้งหมด</SelectItem>
-            {leaveTypes.map((type) => (
-              <SelectItem key={type.id} value={type.id}>
-                {type.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Table */}
-      <div className="rounded-lg shadow-md bg-white border-0 p-5">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>พนักงาน</TableHead>
-              <TableHead>ประเภทการลา</TableHead>
-              <TableHead>วันที่เริ่ม</TableHead>
-              <TableHead>วันที่สิ้นสุด</TableHead>
-              <TableHead>จำนวนวัน</TableHead>
-              <TableHead>เหตุผล</TableHead>
-              <TableHead className="text-right">จัดการ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedLeaves.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  {searchQuery || leaveTypeFilter !== "all"
-                    ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
-                    : "ยังไม่มีบันทึกการลา"}
-                </TableCell>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-2">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-gray-100 hover:bg-transparent">
+                <TableHead className="font-semibold text-gray-600 text-xs">พนักงาน</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">ประเภทการลา</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">วันที่เริ่ม</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">วันที่สิ้นสุด</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">จำนวนวัน</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">เหตุผล</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs text-center">จัดการ</TableHead>
               </TableRow>
-            ) : (
-              paginatedLeaves.map((leave) => (
-                <TableRow key={leave.id}>
-                  <TableCell className="font-medium">
-                    {leave.employees?.full_name || "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {leave.leave_types?.name || "N/A"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(leave.start_date).toLocaleDateString("th-TH")}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(leave.end_date).toLocaleDateString("th-TH")}
-                  </TableCell>
-                  <TableCell>{leave.days_count} วัน</TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {leave.reason || "-"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingLeave(leave)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(leave.id, leave.employee_id, leave.leave_type_id, leave.days_count)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            </TableHeader>
+            <TableBody>
+              {paginatedLeaves.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-12 text-gray-400">
+                    {searchQuery || leaveTypeFilter !== "all"
+                      ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
+                      : "ยังไม่มีบันทึกการลา"}
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                paginatedLeaves.map((leave, index) => (
+                  <TableRow
+                    key={leave.id}
+                    className={cn(
+                      "border-b border-gray-50 hover:bg-slate-50/50 transition-colors",
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                    )}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium text-gray-900">
+                          {leave.employees?.full_name || "N/A"}
+                          {leave.employees?.nickname && (
+                            <span className="text-gray-500 font-normal"> ({leave.employees.nickname})</span>
+                          )}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="rounded-full px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-100">
+                        {leave.leave_types?.name || "N/A"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-gray-600 text-sm">
+                      {new Date(leave.start_date).toLocaleDateString("th-TH", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                      })}
+                    </TableCell>
+                    <TableCell className="text-gray-600 text-sm">
+                      {new Date(leave.end_date).toLocaleDateString("th-TH", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                      })}
+                    </TableCell>
+                    <TableCell className="text-gray-700 font-medium">
+                      {leave.days_count} วัน
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate text-gray-600 text-sm">
+                      {leave.reason || "-"}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingLeave(leave)}
+                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
+                        >
+                          <Pencil className="h-4 w-4 text-slate-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(leave.id, leave.employee_id, leave.leave_type_id, leave.days_count)}
+                          className="h-8 w-8 rounded-lg hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Pagination */}

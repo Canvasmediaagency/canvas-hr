@@ -9,8 +9,6 @@ import {
   Calendar,
   CalendarDays,
   FileText,
-  Bell,
-  User,
 } from "lucide-react";
 
 const routes = [
@@ -101,12 +99,12 @@ export function Sidebar() {
 
       {/* Bottom Actions */}
       <div className="p-4 space-y-3 border-t border-white/10">
-        {/* <button className="w-full flex flex-col items-center justify-center gap-2 py-3 px-3 rounded-2xl hover:bg-white/10 transition-all duration-200">
-          <Bell className="h-6 w-6 text-white" strokeWidth={2} />
-        </button>
-        <button className="w-full flex flex-col items-center justify-center gap-2 py-3 px-3 rounded-2xl hover:bg-white/10 transition-all duration-200">
-          <User className="h-6 w-6 text-white" strokeWidth={2} />
-        </button> */}
+        <p className="text-xs text-center text-white/70">
+         @ Canvas
+        </p>
+        <p className="text-[10px] text-center text-white/70">
+          Developed by Folk
+        </p>
       </div>
     </div>
   );

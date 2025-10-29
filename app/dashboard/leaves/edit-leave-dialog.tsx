@@ -123,18 +123,18 @@ export function EditLeaveDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px] rounded-2xl">
         <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>แก้ไขบันทึกการลา</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="space-y-3 pb-4">
+            <DialogTitle className="text-2xl font-bold text-gray-900">แก้ไขบันทึกการลา</DialogTitle>
+            <DialogDescription className="text-gray-600">
               แก้ไขข้อมูลการลาของพนักงาน
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-5 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit_employee_id">พนักงาน *</Label>
+              <Label htmlFor="edit_employee_id" className="text-sm font-semibold text-gray-700">พนักงาน *</Label>
               <Select
                 value={formData.employee_id}
                 onValueChange={(value) =>
@@ -142,7 +142,7 @@ export function EditLeaveDialog({
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded-xl border-gray-200 h-11">
                   <SelectValue placeholder="เลือกพนักงาน" />
                 </SelectTrigger>
                 <SelectContent>
@@ -156,7 +156,7 @@ export function EditLeaveDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_leave_type_id">ประเภทการลา *</Label>
+              <Label htmlFor="edit_leave_type_id" className="text-sm font-semibold text-gray-700">ประเภทการลา *</Label>
               <Select
                 value={formData.leave_type_id}
                 onValueChange={(value) =>
@@ -164,7 +164,7 @@ export function EditLeaveDialog({
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded-xl border-gray-200 h-11">
                   <SelectValue placeholder="เลือกประเภทการลา" />
                 </SelectTrigger>
                 <SelectContent>
@@ -179,11 +179,11 @@ export function EditLeaveDialog({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="edit_start_date">วันที่เริ่ม *</Label>
+                <Label htmlFor="edit_start_date" className="text-sm font-semibold text-gray-700">วันที่เริ่ม *</Label>
                 <input
                   id="edit_start_date"
                   type="date"
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  className="flex h-11 w-full rounded-xl border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
                   value={formData.start_date}
                   onChange={(e) =>
                     setFormData({ ...formData, start_date: e.target.value })
@@ -193,11 +193,11 @@ export function EditLeaveDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="edit_end_date">วันที่สิ้นสุด *</Label>
+                <Label htmlFor="edit_end_date" className="text-sm font-semibold text-gray-700">วันที่สิ้นสุด *</Label>
                 <input
                   id="edit_end_date"
                   type="date"
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  className="flex h-11 w-full rounded-xl border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
                   value={formData.end_date}
                   onChange={(e) =>
                     setFormData({ ...formData, end_date: e.target.value })
@@ -208,7 +208,7 @@ export function EditLeaveDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_days_count">จำนวนวัน *</Label>
+              <Label htmlFor="edit_days_count" className="text-sm font-semibold text-gray-700">จำนวนวัน *</Label>
               <Input
                 id="edit_days_count"
                 type="number"
@@ -218,12 +218,13 @@ export function EditLeaveDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, days_count: e.target.value })
                 }
+                className="rounded-xl border-gray-200 h-11"
                 required
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_reason">เหตุผล</Label>
+              <Label htmlFor="edit_reason" className="text-sm font-semibold text-gray-700">เหตุผล</Label>
               <Textarea
                 id="edit_reason"
                 value={formData.reason}
@@ -231,11 +232,12 @@ export function EditLeaveDialog({
                   setFormData({ ...formData, reason: e.target.value })
                 }
                 rows={3}
+                className="rounded-xl border-gray-200 resize-none"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_notes">หมายเหตุ</Label>
+              <Label htmlFor="edit_notes" className="text-sm font-semibold text-gray-700">หมายเหตุ</Label>
               <Textarea
                 id="edit_notes"
                 value={formData.notes}
@@ -243,20 +245,26 @@ export function EditLeaveDialog({
                   setFormData({ ...formData, notes: e.target.value })
                 }
                 rows={2}
+                className="rounded-xl border-gray-200 resize-none"
               />
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className="rounded-xl border-gray-200 h-11"
             >
               ยกเลิก
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="rounded-xl h-11 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 shadow-lg shadow-slate-500/20"
+            >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </Button>
           </DialogFooter>
