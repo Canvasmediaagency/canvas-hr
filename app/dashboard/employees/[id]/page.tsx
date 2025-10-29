@@ -4,13 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
-  Briefcase,
   Building2,
   Calendar,
   User,
   Clock,
   TrendingUp,
-  Phone
+  Cake
 } from "lucide-react";
 import Link from "next/link";
 import { LeaveQuotaManager } from "./leave-quota-manager";
@@ -83,11 +82,22 @@ export default async function EmployeeDetailPage({
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900">
                     {employee.full_name}
+                    {employee.nickname && (
+                      <span className="text-2xl font-normal text-muted-foreground ml-2">
+                        ({employee.nickname})
+                      </span>
+                    )}
                   </h1>
-                  {employee.phone_number && (
+                  {employee.birthday && (
                     <div className="flex items-center gap-2 mt-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{employee.phone_number}</span>
+                      <Cake className="h-4 w-4 text-pink-600" />
+                      <span className="text-muted-foreground">
+                        {new Date(employee.birthday).toLocaleDateString("th-TH", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric"
+                        })}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -96,12 +106,6 @@ export default async function EmployeeDetailPage({
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-4 w-4 text-blue-600" />
                       <span className="font-medium">{employee.department}</span>
-                    </div>
-                  )}
-                  {employee.position && (
-                    <div className="flex items-center gap-1.5">
-                      <Briefcase className="h-4 w-4 text-purple-600" />
-                      <span className="font-medium">{employee.position}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-1.5">

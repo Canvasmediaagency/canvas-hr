@@ -35,10 +35,10 @@ export function AddEmployeeDialog({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
-    phone_number: "",
+    nickname: "",
     department: "",
-    position: "",
     hire_date: "",
+    birthday: "",
     status: "active" as "active" | "inactive" | "terminated",
   });
 
@@ -74,10 +74,10 @@ export function AddEmployeeDialog({
 
       setFormData({
         full_name: "",
-        phone_number: "",
+        nickname: "",
         department: "",
-        position: "",
         hire_date: "",
+        birthday: "",
         status: "active",
       });
       onSuccess();
@@ -114,15 +114,25 @@ export function AddEmployeeDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="phone_number">เบอร์โทรศัพท์</Label>
+              <Label htmlFor="nickname">ชื่อเล่น</Label>
               <Input
-                id="phone_number"
-                type="tel"
-                value={formData.phone_number}
+                id="nickname"
+                value={formData.nickname}
                 onChange={(e) =>
-                  setFormData({ ...formData, phone_number: e.target.value })
+                  setFormData({ ...formData, nickname: e.target.value })
                 }
-                placeholder="0XX-XXX-XXXX"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="birthday">วันเกิด</Label>
+              <Input
+                id="birthday"
+                type="date"
+                value={formData.birthday}
+                onChange={(e) =>
+                  setFormData({ ...formData, birthday: e.target.value })
+                }
               />
             </div>
 
@@ -133,17 +143,6 @@ export function AddEmployeeDialog({
                 value={formData.department}
                 onChange={(e) =>
                   setFormData({ ...formData, department: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="position">ตำแหน่ง</Label>
-              <Input
-                id="position"
-                value={formData.position}
-                onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
                 }
               />
             </div>

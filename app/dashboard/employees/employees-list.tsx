@@ -33,6 +33,36 @@ interface EmployeesListProps {
   initialEmployees: Employee[];
 }
 
+// Calculate work duration from hire date
+function calculateWorkDuration(hireDate: string): string {
+  const hire = new Date(hireDate);
+  const now = new Date();
+
+  let years = now.getFullYear() - hire.getFullYear();
+  let months = now.getMonth() - hire.getMonth();
+  let days = now.getDate() - hire.getDate();
+
+  // Adjust for negative days
+  if (days < 0) {
+    months--;
+    const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += lastMonth.getDate();
+  }
+
+  // Adjust for negative months
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  const parts = [];
+  if (years > 0) parts.push(`${years} ปี`);
+  if (months > 0) parts.push(`${months} เดือน`);
+  if (days > 0) parts.push(`${days} วัน`);
+
+  return parts.length > 0 ? parts.join(' ') : '0 วัน';
+}
+
 export function EmployeesList({ initialEmployees }: EmployeesListProps) {
   const router = useRouter();
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
@@ -100,9 +130,8 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
       filtered = filtered.filter(
         (emp) =>
           emp.full_name.toLowerCase().includes(query) ||
-          emp.phone_number?.toLowerCase().includes(query) ||
-          emp.department?.toLowerCase().includes(query) ||
-          emp.position?.toLowerCase().includes(query)
+          emp.nickname?.toLowerCase().includes(query) ||
+          emp.department?.toLowerCase().includes(query)
       );
     }
 
@@ -142,7 +171,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="ค้นหาชื่อ, เบอร์โทร, แผนก, ตำแหน่ง..."
+            placeholder="ค้นหาชื่อ, ชื่อเล่น, แผนก..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -167,10 +196,11 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
           <TableHeader>
             <TableRow>
               <TableHead>ชื่อ-นามสกุล</TableHead>
-              <TableHead>เบอร์โทรศัพท์</TableHead>
+              <TableHead>ชื่อเล่น</TableHead>
+              <TableHead>วันเกิด</TableHead>
               <TableHead>แผนก</TableHead>
-              <TableHead>ตำแหน่ง</TableHead>
               <TableHead>วันเริ่มงาน</TableHead>
+              <TableHead>อายุงาน</TableHead>
               <TableHead>สถานะ</TableHead>
               <TableHead className="text-right">จัดการ</TableHead>
             </TableRow>
@@ -178,7 +208,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
           <TableBody>
             {paginatedEmployees.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   {searchQuery || statusFilter !== "all"
                     ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
                     : "ยังไม่มีข้อมูลพนักงาน"}
@@ -188,11 +218,22 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
               paginatedEmployees.map((employee) => (
                 <TableRow key={employee.id}>
                   <TableCell className="font-medium">{employee.full_name}</TableCell>
-                  <TableCell>{employee.phone_number || "-"}</TableCell>
+                  <TableCell>{employee.nickname || "-"}</TableCell>
+                  <TableCell>
+                    {employee.birthday
+                      ? new Date(employee.birthday).toLocaleDateString("th-TH", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric"
+                        })
+                      : "-"}
+                  </TableCell>
                   <TableCell>{employee.department || "-"}</TableCell>
-                  <TableCell>{employee.position || "-"}</TableCell>
                   <TableCell>
                     {new Date(employee.hire_date).toLocaleDateString("th-TH")}
+                  </TableCell>
+                  <TableCell className="font-medium text-blue-600">
+                    {calculateWorkDuration(employee.hire_date)}
                   </TableCell>
                   <TableCell>
                     <Badge

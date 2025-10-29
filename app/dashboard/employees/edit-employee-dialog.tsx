@@ -40,9 +40,9 @@ export function EditEmployeeDialog({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: employee.full_name,
-    phone_number: employee.phone_number || "",
+    nickname: employee.nickname || "",
+    birthday: employee.birthday || "",
     department: employee.department || "",
-    position: employee.position || "",
     hire_date: employee.hire_date,
     status: employee.status as "active" | "inactive" | "terminated",
   });
@@ -93,15 +93,25 @@ export function EditEmployeeDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_phone_number">เบอร์โทรศัพท์</Label>
+              <Label htmlFor="edit_nickname">ชื่อเล่น</Label>
               <Input
-                id="edit_phone_number"
-                type="tel"
-                value={formData.phone_number}
+                id="edit_nickname"
+                value={formData.nickname}
                 onChange={(e) =>
-                  setFormData({ ...formData, phone_number: e.target.value })
+                  setFormData({ ...formData, nickname: e.target.value })
                 }
-                placeholder="0XX-XXX-XXXX"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="edit_birthday">วันเกิด</Label>
+              <Input
+                id="edit_birthday"
+                type="date"
+                value={formData.birthday}
+                onChange={(e) =>
+                  setFormData({ ...formData, birthday: e.target.value })
+                }
               />
             </div>
 
@@ -112,17 +122,6 @@ export function EditEmployeeDialog({
                 value={formData.department}
                 onChange={(e) =>
                   setFormData({ ...formData, department: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="edit_position">ตำแหน่ง</Label>
-              <Input
-                id="edit_position"
-                value={formData.position}
-                onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
                 }
               />
             </div>
