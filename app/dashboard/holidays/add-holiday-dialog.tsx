@@ -102,11 +102,16 @@ export function AddHolidayDialog({
               <Input
                 id="date"
                 type="date"
-                lang="en-US"
                 value={formData.date}
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
                 }
+                onBlur={(e) => {
+                  // Ensure the value is set correctly
+                  if (e.target.value) {
+                    setFormData({ ...formData, date: e.target.value });
+                  }
+                }}
                 required
               />
             </div>

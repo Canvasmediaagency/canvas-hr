@@ -192,11 +192,16 @@ export function EditLeaveDialog({
                 <Input
                   id="edit_start_date"
                   type="date"
-                  lang="en-US"
                   value={formData.start_date}
                   onChange={(e) => {
                     setFormData({ ...formData, start_date: e.target.value });
                     setTimeout(calculateDays, 0);
+                  }}
+                  onBlur={(e) => {
+                    // Ensure the value is set correctly
+                    if (e.target.value) {
+                      setFormData({ ...formData, start_date: e.target.value });
+                    }
                   }}
                   required
                 />
@@ -207,11 +212,16 @@ export function EditLeaveDialog({
                 <Input
                   id="edit_end_date"
                   type="date"
-                  lang="en-US"
                   value={formData.end_date}
                   onChange={(e) => {
                     setFormData({ ...formData, end_date: e.target.value });
                     setTimeout(calculateDays, 0);
+                  }}
+                  onBlur={(e) => {
+                    // Ensure the value is set correctly
+                    if (e.target.value) {
+                      setFormData({ ...formData, end_date: e.target.value });
+                    }
                   }}
                   required
                 />

@@ -179,11 +179,16 @@ export function AddLeaveDialog({
                 <Input
                   id="start_date"
                   type="date"
-                  lang="en-US"
                   value={formData.start_date}
                   onChange={(e) => {
                     setFormData({ ...formData, start_date: e.target.value });
                     setTimeout(calculateDays, 0);
+                  }}
+                  onBlur={(e) => {
+                    // Ensure the value is set correctly
+                    if (e.target.value) {
+                      setFormData({ ...formData, start_date: e.target.value });
+                    }
                   }}
                   required
                 />
@@ -194,11 +199,16 @@ export function AddLeaveDialog({
                 <Input
                   id="end_date"
                   type="date"
-                  lang="en-US"
                   value={formData.end_date}
                   onChange={(e) => {
                     setFormData({ ...formData, end_date: e.target.value });
                     setTimeout(calculateDays, 0);
+                  }}
+                  onBlur={(e) => {
+                    // Ensure the value is set correctly
+                    if (e.target.value) {
+                      setFormData({ ...formData, end_date: e.target.value });
+                    }
                   }}
                   required
                 />
