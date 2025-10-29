@@ -52,15 +52,6 @@ export function AddLeaveDialog({
     notes: "",
   });
 
-  const calculateDays = () => {
-    if (formData.start_date && formData.end_date) {
-      const start = new Date(formData.start_date);
-      const end = new Date(formData.end_date);
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-      setFormData({ ...formData, days_count: diffDays.toString() });
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,16 +171,9 @@ export function AddLeaveDialog({
                   id="start_date"
                   type="date"
                   value={formData.start_date}
-                  onChange={(e) => {
-                    setFormData({ ...formData, start_date: e.target.value });
-                    setTimeout(calculateDays, 0);
-                  }}
-                  onBlur={(e) => {
-                    // Ensure the value is set correctly
-                    if (e.target.value) {
-                      setFormData({ ...formData, start_date: e.target.value });
-                    }
-                  }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, start_date: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -200,16 +184,9 @@ export function AddLeaveDialog({
                   id="end_date"
                   type="date"
                   value={formData.end_date}
-                  onChange={(e) => {
-                    setFormData({ ...formData, end_date: e.target.value });
-                    setTimeout(calculateDays, 0);
-                  }}
-                  onBlur={(e) => {
-                    // Ensure the value is set correctly
-                    if (e.target.value) {
-                      setFormData({ ...formData, end_date: e.target.value });
-                    }
-                  }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, end_date: e.target.value })
+                  }
                   required
                 />
               </div>
