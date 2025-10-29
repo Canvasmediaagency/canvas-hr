@@ -19,6 +19,7 @@ import { EditEmployeeDialog } from "./edit-employee-dialog";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/lib/database.types";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Employee = Tables<"employees">;
 
@@ -158,7 +159,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
             
             <Button
               onClick={() => setIsAddOpen(true)}
-              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white"
+              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white cursor-pointer"
             >
               <Plus className="h-4 w-4 text-white" />
               เพิ่มพนักงาน
@@ -227,15 +228,15 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
                           employee.status === "active"
                             ? "bg-green-100 text-green-700 hover:bg-green-100"
                             : employee.status === "inactive"
-                            ? "bg-red-100 text-red-700 hover:bg-red-100"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-100"
+                            ? "bg-amber-100 text-amber-700 hover:bg-amber-100"
+                            : "bg-red-100 text-red-700 hover:bg-red-100"
                         )}
                       >
                         {employee.status === "active"
-                          ? "Activated"
+                          ? "ทำงานอยู่"
                           : employee.status === "inactive"
-                          ? "Blocked"
-                          : "Deactivated"}
+                          ? "พักงาน"
+                          : "ออกจากงาน"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-gray-600 text-sm">
@@ -250,18 +251,20 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
-                        >
-                          <Eye className="h-4 w-4 text-slate-600" />
-                        </Button>
+                        <Link href={`/dashboard/employees/${employee.id}`} className="cursor-pointer">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-lg hover:bg-slate-50 cursor-pointer"
+                          >
+                            <Eye className="h-4 w-4 text-slate-600" />
+                          </Button>
+                        </Link>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => setEditingEmployee(employee)}
-                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
+                          className="h-8 w-8 rounded-lg hover:bg-slate-50 cursor-pointer"
                         >
                           <Pencil className="h-4 w-4 text-slate-600" />
                         </Button>
@@ -269,7 +272,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleDelete(employee.id)}
-                          className="h-8 w-8 rounded-lg hover:bg-red-50"
+                          className="h-8 w-8 rounded-lg hover:bg-red-50 cursor-pointer"
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
@@ -295,6 +298,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
+              className="cursor-pointer"
             >
               <ChevronLeft className="h-4 w-4" />
               ก่อนหน้า
@@ -304,6 +308,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
+              className="cursor-pointer"
             >
               ถัดไป
               <ChevronRight className="h-4 w-4" />

@@ -149,7 +149,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
           <div className="flex items-center gap-3">
             <Button
               onClick={() => setIsAddOpen(true)}
-              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white"
+              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               เพิ่มวันหยุด
@@ -240,7 +240,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
                           variant="ghost"
                           size="icon"
                           onClick={() => setEditingHoliday(holiday)}
-                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
+                          className="h-8 w-8 rounded-lg hover:bg-slate-50 cursor-pointer"
                         >
                           <Pencil className="h-4 w-4 text-slate-600" />
                         </Button>
@@ -248,7 +248,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleDelete(holiday.id)}
-                          className="h-8 w-8 rounded-lg hover:bg-red-50"
+                          className="h-8 w-8 rounded-lg hover:bg-red-50 cursor-pointer"
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
@@ -274,6 +274,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
+              className="cursor-pointer"
             >
               <ChevronLeft className="h-4 w-4" />
               ก่อนหน้า
@@ -283,6 +284,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
               size="sm"
               onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
+              className="cursor-pointer"
             >
               ถัดไป
               <ChevronRight className="h-4 w-4" />

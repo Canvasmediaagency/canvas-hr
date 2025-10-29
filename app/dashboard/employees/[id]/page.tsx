@@ -61,37 +61,39 @@ export default async function EmployeeDetailPage({
   return (
     <div className="space-y-6">
       {/* Back Button */}
-      <Link href="/dashboard/employees">
-        <Button variant="ghost" size="sm" className="gap-2">
+      <Link href="/dashboard/employees" className="cursor-pointer">
+        <Button variant="ghost" size="sm" className="gap-2 rounded-xl hover:bg-gray-100 cursor-pointer">
           <ArrowLeft className="h-4 w-4" />
           กลับไปหน้าพนักงาน
         </Button>
       </Link>
 
       {/* Employee Header Card */}
-      <Card className="bg-gradient-to-br from-blue-50 to-white shadow-lg border-0">
+      <Card className="bg-white rounded-2xl shadow-sm border border-gray-100">
         <CardContent className="pt-6">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-4">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-4">
+            <div className="flex items-start gap-5">
               {/* Avatar */}
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center flex-shrink-0">
-                <User className="h-10 w-10 text-white" />
+              <div className="h-20 w-20 rounded-2xl bg-linear-to-br from-slate-600 to-slate-700 flex items-center justify-center flex-shrink-0 shadow-lg shadow-slate-500/20">
+                <User className="h-10 w-10 text-white" strokeWidth={2.5} />
               </div>
               {/* Info */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900">
                     {employee.full_name}
                     {employee.nickname && (
-                      <span className="text-2xl font-normal text-muted-foreground ml-2">
+                      <span className="text-xl font-normal text-gray-500 ml-2">
                         ({employee.nickname})
                       </span>
                     )}
                   </h1>
                   {employee.birthday && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <Cake className="h-4 w-4 text-pink-600" />
-                      <span className="text-muted-foreground">
+                    <div className="flex items-center gap-2 mt-3">
+                      <div className="h-8 w-8 rounded-lg bg-pink-100 flex items-center justify-center">
+                        <Cake className="h-4 w-4 text-pink-600" />
+                      </div>
+                      <span className="text-sm text-gray-600 font-medium">
                         {new Date(employee.birthday).toLocaleDateString("th-TH", {
                           year: "numeric",
                           month: "long",
@@ -101,16 +103,16 @@ export default async function EmployeeDetailPage({
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm">
+                <div className="flex flex-wrap items-center gap-4 text-sm">
                   {employee.department && (
-                    <div className="flex items-center gap-1.5">
-                      <Building2 className="h-4 w-4 text-blue-600" />
-                      <span className="font-medium">{employee.department}</span>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg">
+                      <Building2 className="h-4 w-4 text-slate-600" />
+                      <span className="font-semibold text-gray-900">{employee.department}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg">
                     <Calendar className="h-4 w-4 text-green-600" />
-                    <span className="font-medium">
+                    <span className="font-semibold text-gray-900">
                       เริ่มงาน {new Date(employee.hire_date).toLocaleDateString("th-TH")}
                     </span>
                   </div>
@@ -119,14 +121,13 @@ export default async function EmployeeDetailPage({
             </div>
             {/* Status Badge */}
             <Badge
-              className="text-sm px-3 py-1"
-              variant={
+              className={`text-sm px-4 py-2 rounded-full font-semibold ${
                 employee.status === "active"
-                  ? "default"
+                  ? "bg-green-100 text-green-700 hover:bg-green-100"
                   : employee.status === "inactive"
-                  ? "secondary"
-                  : "destructive"
-              }
+                  ? "bg-amber-100 text-amber-700 hover:bg-amber-100"
+                  : "bg-red-100 text-red-700 hover:bg-red-100"
+              }`}
             >
               {employee.status === "active"
                 ? "ทำงานอยู่"
@@ -140,59 +141,70 @@ export default async function EmployeeDetailPage({
 
       {/* Leave Summary Cards */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="h-5 w-5 text-blue-600" />
-          <h2 className="text-xl font-semibold">สรุปวันลาประจำปี {new Date().getFullYear()}</h2>
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-10 w-10 rounded-xl bg-linear-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-lg shadow-slate-500/20">
+            <TrendingUp className="h-5 w-5 text-white" strokeWidth={2.5} />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">สรุปวันลาประจำปี {new Date().getFullYear()}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {quotas.map((quota: any) => {
             const usagePercent = quota.total_days > 0
               ? (quota.used_days / quota.total_days) * 100
               : 0;
-            const isHighUsage = usagePercent > 80;
 
             return (
-              <Card key={quota.id} className="shadow-md hover:shadow-lg transition-shadow border-0">
+              <Card key={quota.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base font-semibold">
+                    <CardTitle className="text-lg font-bold text-gray-900">
                       {quota.leave_types?.name}
                     </CardTitle>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="rounded-full px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-100">
                       {quota.remaining_days} วันเหลือ
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">ใช้ไป</span>
-                    <span className="font-bold text-orange-600">
+                    <span className="text-gray-600 font-medium">ใช้ไป</span>
+                    <span className="font-bold text-amber-600">
                       {quota.used_days} วัน
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">โควต้าทั้งหมด</span>
-                    <span className="font-semibold">
+                    <span className="text-gray-600 font-medium">โควต้าทั้งหมด</span>
+                    <span className="font-bold text-gray-900">
                       {quota.total_days} วัน
                     </span>
                   </div>
                   <div className="space-y-2">
-                    <Progress
-                      value={usagePercent}
-                      className={isHighUsage ? "bg-red-100" : ""}
-                    />
-                    <p className="text-xs text-muted-foreground text-right">
-                      ใช้ไป {usagePercent.toFixed(0)}%
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all rounded-full ${
+                            usagePercent >= 90
+                              ? 'bg-linear-to-r from-red-500 to-red-600'
+                              : usagePercent >= 70
+                              ? 'bg-linear-to-r from-amber-500 to-amber-600'
+                              : 'bg-linear-to-r from-green-500 to-green-600'
+                          }`}
+                          style={{ width: `${usagePercent}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-gray-700 min-w-[40px] text-right">
+                        {usagePercent.toFixed(0)}%
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             );
           })}
           {quotas.length === 0 && (
-            <Card className="md:col-span-2 lg:col-span-3 shadow-md border-0">
-              <CardContent className="py-8">
-                <p className="text-center text-muted-foreground">
+            <Card className="md:col-span-2 lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100">
+              <CardContent className="py-12">
+                <p className="text-center text-gray-400">
                   ยังไม่มีข้อมูลโควต้าวันลา
                 </p>
               </CardContent>
@@ -205,38 +217,40 @@ export default async function EmployeeDetailPage({
       <LeaveQuotaManager employeeId={id} initialQuotas={quotas} />
 
       {/* Recent Leave History */}
-      <Card className="shadow-md border-0">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-purple-600" />
-            <CardTitle>ประวัติการลาล่าสุด</CardTitle>
+      <Card className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <CardHeader className="space-y-3 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-linear-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-lg shadow-purple-500/20">
+              <Clock className="h-5 w-5 text-white" strokeWidth={2.5} />
+            </div>
+            <CardTitle className="text-2xl font-bold text-gray-900">ประวัติการลาล่าสุด</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           {recentLeaves.length === 0 ? (
-            <div className="text-center py-8">
-              <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-2 opacity-50" />
-              <p className="text-muted-foreground">ยังไม่มีประวัติการลา</p>
+            <div className="text-center py-12">
+              <Clock className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-400 font-medium">ยังไม่มีประวัติการลา</p>
             </div>
           ) : (
             <div className="space-y-3">
               {recentLeaves.map((leave: any) => (
                 <div
                   key={leave.id}
-                  className="flex items-start justify-between p-4 rounded-lg shadow hover:shadow-md bg-white transition-all"
+                  className="flex items-start justify-between p-5 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition-colors"
                 >
-                  <div className="space-y-2 flex-1">
+                  <div className="space-y-2.5 flex-1">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="font-semibold">
+                      <Badge className="rounded-full px-3 py-1 text-xs font-semibold bg-purple-100 text-purple-700 hover:bg-purple-100">
                         {leave.leave_types?.name}
                       </Badge>
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge className="rounded-full px-3 py-1 text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-100">
                         {leave.days_count} วัน
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar className="h-4 w-4" />
-                      <span>
+                      <span className="font-medium">
                         {new Date(leave.start_date).toLocaleDateString("th-TH", {
                           year: "numeric",
                           month: "short",
@@ -251,8 +265,8 @@ export default async function EmployeeDetailPage({
                       </span>
                     </div>
                     {leave.reason && (
-                      <p className="text-sm text-muted-foreground">
-                        <span className="font-medium">เหตุผล:</span> {leave.reason}
+                      <p className="text-sm text-gray-700 bg-white px-3 py-2 rounded-lg">
+                        <span className="font-semibold">เหตุผล:</span> {leave.reason}
                       </p>
                     )}
                   </div>

@@ -69,12 +69,17 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
   };
 
   return (
-    <Card className="shadow-md border-0">
-      <CardHeader>
+    <Card className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <CardHeader className="space-y-3 pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle>กำหนดวันลาแต่ละประเภท</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-900">กำหนดวันลาแต่ละประเภท</CardTitle>
           {!editing ? (
-            <Button variant="outline" size="sm" onClick={() => setEditing(true)} className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditing(true)}
+              className="gap-2 rounded-xl border-gray-200 h-9 cursor-pointer"
+            >
               <Pencil className="h-4 w-4" />
               แก้ไขโควต้า
             </Button>
@@ -85,12 +90,17 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
                 size="sm"
                 onClick={handleCancel}
                 disabled={saving}
-                className="gap-2"
+                className="gap-2 rounded-xl border-gray-200 h-9 cursor-pointer"
               >
                 <X className="h-4 w-4" />
                 ยกเลิก
               </Button>
-              <Button size="sm" onClick={handleSave} disabled={saving} className="gap-2">
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={saving}
+                className="gap-2 rounded-xl h-9 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 shadow-lg shadow-slate-500/20 text-white cursor-pointer"
+              >
                 <Save className="h-4 w-4" />
                 {saving ? "กำลังบันทึก..." : "บันทึก"}
               </Button>
@@ -101,9 +111,16 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
       <CardContent>
         <div className="grid gap-4 md:grid-cols-3">
           {leaveTypes.map((type) => (
-            <div key={type.id} className={`rounded-lg p-4 transition-all ${editing ? 'shadow-md bg-blue-50' : 'shadow bg-white'}`}>
-              <h3 className="font-semibold text-lg mb-1">{type.name}</h3>
-              <p className="text-sm text-muted-foreground mb-3">
+            <div
+              key={type.id}
+              className={`rounded-xl p-5 transition-all ${
+                editing
+                  ? 'shadow-md bg-slate-50 border border-slate-200'
+                  : 'shadow-sm bg-gray-50 border border-gray-100'
+              }`}
+            >
+              <h3 className="font-bold text-lg mb-1.5 text-gray-900">{type.name}</h3>
+              <p className="text-sm text-gray-600 mb-4">
                 {type.description}
               </p>
               {editing ? (
@@ -115,27 +132,27 @@ export function LeaveTypeSettings({ initialLeaveTypes }: LeaveTypeSettingsProps)
                     onChange={(e) =>
                       updateQuota(type.id, parseInt(e.target.value) || 0)
                     }
-                    className="w-24"
+                    className="w-24 rounded-xl border-gray-200 h-10"
                   />
-                  <span className="text-sm">วัน</span>
+                  <span className="text-sm font-medium text-gray-700">วัน</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-base">
+                  <Badge className="rounded-full px-3 py-1 text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-100">
                     {type.default_quota} วัน
                   </Badge>
-                  <span className="text-sm text-muted-foreground">
-                  </span>
                 </div>
               )}
             </div>
           ))}
         </div>
         {editing && (
-          <p className="text-sm text-muted-foreground mt-4">
-            <strong>หมายเหตุ:</strong> การแก้ไขโควต้ามาตรฐานจะมีผลกับพนักงานใหม่เท่านั้น
-            พนักงานปัจจุบันต้องแก้ไขโควต้าในหน้ารายละเอียดพนักงานแต่ละคน
-          </p>
+          <div className="mt-6 p-4 rounded-xl bg-amber-50 border border-amber-100">
+            <p className="text-sm text-gray-700">
+              <strong className="font-semibold text-amber-800">หมายเหตุ:</strong> การแก้ไขโควต้ามาตรฐานจะมีผลกับพนักงานใหม่เท่านั้น
+              พนักงานปัจจุบันต้องแก้ไขโควต้าในหน้ารายละเอียดพนักงานแต่ละคน
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
