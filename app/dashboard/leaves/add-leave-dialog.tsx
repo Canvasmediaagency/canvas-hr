@@ -144,7 +144,7 @@ export function AddLeaveDialog({
                 <SelectContent>
                   {employees.map((emp) => (
                     <SelectItem key={emp.id} value={emp.id}>
-                      {emp.full_name}
+                      {emp.full_name}{emp.nickname && ` (${emp.nickname})`}
                     </SelectItem>
                   ))}
                 </SelectContent>
