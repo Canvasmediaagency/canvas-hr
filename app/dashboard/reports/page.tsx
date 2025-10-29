@@ -43,13 +43,6 @@ export default async function ReportsPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">รายงานวันลา</h2>
-        <p className="text-muted-foreground">
-          สรุปการใช้วันลาของพนักงานทั้งหมด (ปี {new Date().getFullYear()})
-        </p>
-      </div>
-
       {/* สรุปโควต้าวันลาแต่ละประเภท */}
       <div className="mb-8">
         <LeaveTypeSettings initialLeaveTypes={leaveTypes} />

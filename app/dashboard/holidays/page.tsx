@@ -22,13 +22,6 @@ export default async function HolidaysPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">วันหยุดบริษัท</h2>
-        <p className="text-muted-foreground">
-          กำหนดและจัดการวันหยุดประจำปี
-        </p>
-      </div>
-
       <HolidaysList initialHolidays={holidays} />
     </div>
   );

@@ -53,17 +53,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">
-          ภาพรวมระบบ HR Management
-        </p>
-      </div>
-
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
+        <Card className="bg-linear-to-br from-blue-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               พนักงานทั้งหมด
@@ -82,7 +74,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
+        <Card className="bg-linear-to-br from-purple-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               บันทึกการลา
@@ -99,7 +91,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
+        <Card className="bg-linear-to-br from-orange-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               วันหยุดบริษัท
@@ -116,7 +108,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
+        <Card className="bg-linear-to-br from-green-50 to-white shadow-md hover:shadow-lg transition-shadow border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               วันหยุดถัดไป
@@ -153,6 +145,7 @@ export default async function DashboardPage() {
               </p>
             ) : (
               <div className="space-y-3">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {stats.recentLeaves.map((leave: any) => (
                   <div
                     key={leave.id}
@@ -199,6 +192,7 @@ export default async function DashboardPage() {
               </p>
             ) : (
               <div className="space-y-3">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {stats.upcomingHolidays.map((holiday: any) => (
                   <div
                     key={holiday.id}
