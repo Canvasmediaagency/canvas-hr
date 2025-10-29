@@ -19,8 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
 import { AddHolidayDialog } from "./add-holiday-dialog";
+import { EditHolidayDialog } from "./edit-holiday-dialog";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/lib/database.types";
 import { useRouter } from "next/navigation";
@@ -35,6 +36,7 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
   const router = useRouter();
   const [holidays, setHolidays] = useState<Holiday[]>(initialHolidays);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,6 +78,12 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
   const handleAddSuccess = async () => {
     await refreshHolidays();
     setIsAddOpen(false);
+    router.refresh();
+  };
+
+  const handleEditSuccess = async () => {
+    await refreshHolidays();
+    setEditingHoliday(null);
     router.refresh();
   };
 
@@ -200,6 +208,13 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => setEditingHoliday(holiday)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDelete(holiday.id)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -246,6 +261,15 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
         onOpenChange={setIsAddOpen}
         onSuccess={handleAddSuccess}
       />
+
+      {editingHoliday && (
+        <EditHolidayDialog
+          open={!!editingHoliday}
+          onOpenChange={(open) => !open && setEditingHoliday(null)}
+          onSuccess={handleEditSuccess}
+          holiday={editingHoliday}
+        />
+      )}
     </div>
   );
 }

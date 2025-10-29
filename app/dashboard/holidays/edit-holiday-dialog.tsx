@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,52 +21,61 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
+import type { Tables } from "@/lib/database.types";
 
-interface AddHolidayDialogProps {
+type Holiday = Tables<"company_holidays">;
+
+interface EditHolidayDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  holiday: Holiday;
 }
 
-export function AddHolidayDialog({
+export function EditHolidayDialog({
   open,
   onOpenChange,
   onSuccess,
-}: AddHolidayDialogProps) {
+  holiday,
+}: EditHolidayDialogProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    date: "",
-    description: "",
-    is_recurring: "false",
+    name: holiday.name,
+    date: holiday.date,
+    description: holiday.description || "",
+    is_recurring: holiday.is_recurring ? "true" : "false",
   });
+
+  useEffect(() => {
+    setFormData({
+      name: holiday.name,
+      date: holiday.date,
+      description: holiday.description || "",
+      is_recurring: holiday.is_recurring ? "true" : "false",
+    });
+  }, [holiday]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.from("company_holidays").insert([
-        {
+      const { error } = await supabase
+        .from("company_holidays")
+        .update({
           name: formData.name,
           date: formData.date,
           description: formData.description || null,
           is_recurring: formData.is_recurring === "true",
-        },
-      ]);
+        })
+        .eq("id", holiday.id);
 
       if (error) throw error;
 
-      setFormData({
-        name: "",
-        date: "",
-        description: "",
-        is_recurring: "false",
-      });
       onSuccess();
     } catch (error) {
-      console.error("Error adding holiday:", error);
-      alert("เกิดข้อผิดพลาดในการเพิ่มวันหยุด");
+      console.error("Error updating holiday:", error);
+      alert("เกิดข้อผิดพลาดในการแก้ไขวันหยุด");
     } finally {
       setLoading(false);
     }
@@ -77,17 +86,17 @@ export function AddHolidayDialog({
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>เพิ่มวันหยุด</DialogTitle>
+            <DialogTitle>แก้ไขวันหยุด</DialogTitle>
             <DialogDescription>
-              กำหนดวันหยุดบริษัทใหม่
+              แก้ไขข้อมูลวันหยุดบริษัท
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">ชื่อวันหยุด *</Label>
+              <Label htmlFor="edit_name">ชื่อวันหยุด *</Label>
               <Input
-                id="name"
+                id="edit_name"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -98,9 +107,9 @@ export function AddHolidayDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="date">วันที่ *</Label>
+              <Label htmlFor="edit_date">วันที่ *</Label>
               <Input
-                id="date"
+                id="edit_date"
                 type="date"
                 lang="en-US"
                 value={formData.date}
@@ -112,7 +121,7 @@ export function AddHolidayDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="is_recurring">ประเภท</Label>
+              <Label htmlFor="edit_is_recurring">ประเภท</Label>
               <Select
                 value={formData.is_recurring}
                 onValueChange={(value) =>
@@ -130,9 +139,9 @@ export function AddHolidayDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="description">คำอธิบาย</Label>
+              <Label htmlFor="edit_description">คำอธิบาย</Label>
               <Textarea
-                id="description"
+                id="edit_description"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })

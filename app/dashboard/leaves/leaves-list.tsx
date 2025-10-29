@@ -19,8 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Filter, Pencil } from "lucide-react";
 import { AddLeaveDialog } from "./add-leave-dialog";
+import { EditLeaveDialog } from "./edit-leave-dialog";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/lib/database.types";
 import { useRouter } from "next/navigation";
@@ -46,6 +47,7 @@ export function LeavesList({
   const router = useRouter();
   const [leaves, setLeaves] = useState<LeaveRecord[]>(initialLeaves);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingLeave, setEditingLeave] = useState<LeaveRecord | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [leaveTypeFilter, setLeaveTypeFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,6 +109,12 @@ export function LeavesList({
   const handleAddSuccess = async () => {
     await refreshLeaves();
     setIsAddOpen(false);
+    router.refresh();
+  };
+
+  const handleEditSuccess = async () => {
+    await refreshLeaves();
+    setEditingLeave(null);
     router.refresh();
   };
 
@@ -235,6 +243,13 @@ export function LeavesList({
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => setEditingLeave(leave)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDelete(leave.id, leave.employee_id, leave.leave_type_id, leave.days_count)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -283,6 +298,17 @@ export function LeavesList({
         employees={employees}
         leaveTypes={leaveTypes}
       />
+
+      {editingLeave && (
+        <EditLeaveDialog
+          open={!!editingLeave}
+          onOpenChange={(open) => !open && setEditingLeave(null)}
+          onSuccess={handleEditSuccess}
+          leave={editingLeave}
+          employees={employees}
+          leaveTypes={leaveTypes}
+        />
+      )}
     </div>
   );
 }
