@@ -83,18 +83,18 @@ export function EditHolidayDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px] rounded-2xl">
         <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>แก้ไขวันหยุด</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="space-y-3 pb-4">
+            <DialogTitle className="text-2xl font-bold text-gray-900">แก้ไขวันหยุด</DialogTitle>
+            <DialogDescription className="text-gray-600">
               แก้ไขข้อมูลวันหยุดบริษัท
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-5 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit_name">ชื่อวันหยุด *</Label>
+              <Label htmlFor="edit_name" className="text-sm font-semibold text-gray-700">ชื่อวันหยุด *</Label>
               <Input
                 id="edit_name"
                 value={formData.name}
@@ -102,16 +102,17 @@ export function EditHolidayDialog({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="เช่น วันขึ้นปีใหม่"
+                className="rounded-xl border-gray-200 h-11"
                 required
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_date">วันที่ *</Label>
+              <Label htmlFor="edit_date" className="text-sm font-semibold text-gray-700">วันที่ *</Label>
               <input
                 id="edit_date"
                 type="date"
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                className="flex h-11 w-full rounded-xl border border-gray-200 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
                 value={formData.date}
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
@@ -121,14 +122,14 @@ export function EditHolidayDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_is_recurring">ประเภท</Label>
+              <Label htmlFor="edit_is_recurring" className="text-sm font-semibold text-gray-700">ประเภท</Label>
               <Select
                 value={formData.is_recurring}
                 onValueChange={(value) =>
                   setFormData({ ...formData, is_recurring: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded-xl border-gray-200 h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -139,7 +140,7 @@ export function EditHolidayDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit_description">คำอธิบาย</Label>
+              <Label htmlFor="edit_description" className="text-sm font-semibold text-gray-700">คำอธิบาย</Label>
               <Textarea
                 id="edit_description"
                 value={formData.description}
@@ -148,20 +149,26 @@ export function EditHolidayDialog({
                 }
                 rows={3}
                 placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"
+                className="rounded-xl border-gray-200 resize-none"
               />
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className="rounded-xl border-gray-200 h-11"
             >
               ยกเลิก
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="rounded-xl h-11 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 shadow-lg shadow-slate-500/20 text-white"
+            >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </Button>
           </DialogFooter>

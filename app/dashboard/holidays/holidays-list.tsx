@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -19,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+import { Plus, Trash2, Search, ChevronLeft, ChevronRight, Pencil, CalendarDays } from "lucide-react";
 import { AddHolidayDialog } from "./add-holiday-dialog";
 import { EditHolidayDialog } from "./edit-holiday-dialog";
 import { supabase } from "@/lib/supabase";
@@ -118,113 +119,147 @@ export function HolidaysList({ initialHolidays }: HolidaysListProps) {
     return filteredHolidays.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredHolidays, currentPage]);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
+  // Handlers for search and filter with page reset
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
     setCurrentPage(1);
-  }, [searchQuery, typeFilter]);
+  };
+
+  const handleFilterChange = (value: string) => {
+    setTypeFilter(value);
+    setCurrentPage(1);
+  };
 
   return (
-    <div className="space-y-4">
-      {/* Header with Add Button */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-lg font-semibold">วันหยุดบริษัท</h3>
-          <p className="text-sm text-muted-foreground">
-            แสดง {paginatedHolidays.length} จาก {filteredHolidays.length} วัน
-          </p>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-10 w-10 rounded-xl bg-linear-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-lg shadow-slate-500/20">
+                <CalendarDays className="h-5 w-5 text-white" strokeWidth={2.5} />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">วันหยุดบริษัท</h2>
+            </div>
+            <p className="text-sm text-gray-500 ml-13">
+              แสดง {paginatedHolidays.length} จาก {filteredHolidays.length} วัน
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => setIsAddOpen(true)}
+              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white"
+            >
+              <Plus className="h-4 w-4" />
+              เพิ่มวันหยุด
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setIsAddOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          เพิ่มวันหยุด
-        </Button>
-      </div>
 
-      {/* Search and Filter Section */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="ค้นหาชื่อวันหยุด, คำอธิบาย..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
+        {/* Search and Filter Section */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="ค้นหาชื่อวันหยุด, คำอธิบาย..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-9 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white"
+            />
+          </div>
+          <Select value={typeFilter} onValueChange={handleFilterChange}>
+            <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-gray-200">
+              <SelectValue placeholder="ประเภททั้งหมด" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ประเภททั้งหมด</SelectItem>
+              <SelectItem value="recurring">วันหยุดประจำปี</SelectItem>
+              <SelectItem value="special">วันหยุดพิเศษ</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="ประเภททั้งหมด" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">ประเภททั้งหมด</SelectItem>
-            <SelectItem value="recurring">วันหยุดประจำปี</SelectItem>
-            <SelectItem value="special">วันหยุดพิเศษ</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Table */}
-      <div className="rounded-lg shadow-md bg-white border-0 p-5">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>วันที่</TableHead>
-              <TableHead>ชื่อวันหยุด</TableHead>
-              <TableHead>คำอธิบาย</TableHead>
-              <TableHead>ประเภท</TableHead>
-              <TableHead className="text-right">จัดการ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedHolidays.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  {searchQuery || typeFilter !== "all"
-                    ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
-                    : "ยังไม่มีวันหยุดที่กำหนดไว้"}
-                </TableCell>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-2">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-gray-100 hover:bg-transparent">
+                <TableHead className="font-semibold text-gray-600 text-xs">วันที่</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">ชื่อวันหยุด</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">คำอธิบาย</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">ประเภท</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs text-center">จัดการ</TableHead>
               </TableRow>
-            ) : (
-              paginatedHolidays.map((holiday) => (
-                <TableRow key={holiday.id}>
-                  <TableCell className="font-medium">
-                    {new Date(holiday.date).toLocaleDateString("th-TH", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </TableCell>
-                  <TableCell>{holiday.name}</TableCell>
-                  <TableCell className="max-w-[300px]">
-                    {holiday.description || "-"}
-                  </TableCell>
-                  <TableCell>
-                    {holiday.is_recurring ? (
-                      <Badge variant="secondary">วันหยุดประจำปี</Badge>
-                    ) : (
-                      <Badge variant="outline">วันหยุดพิเศษ</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingHoliday(holiday)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(holiday.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            </TableHeader>
+            <TableBody>
+              {paginatedHolidays.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-12 text-gray-400">
+                    {searchQuery || typeFilter !== "all"
+                      ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
+                      : "ยังไม่มีวันหยุดที่กำหนดไว้"}
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                paginatedHolidays.map((holiday, index) => (
+                  <TableRow
+                    key={holiday.id}
+                    className={cn(
+                      "border-b border-gray-50 hover:bg-slate-50/50 transition-colors",
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                    )}
+                  >
+                    <TableCell className="text-gray-700 font-medium">
+                      {new Date(holiday.date).toLocaleDateString("th-TH", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                      })}
+                    </TableCell>
+                    <TableCell className="font-medium text-gray-900">{holiday.name}</TableCell>
+                    <TableCell className="max-w-[300px] text-gray-600 text-sm">
+                      {holiday.description || "-"}
+                    </TableCell>
+                    <TableCell>
+                      {holiday.is_recurring ? (
+                        <Badge className="rounded-full px-3 py-1 text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-100">
+                          วันหยุดประจำปี
+                        </Badge>
+                      ) : (
+                        <Badge className="rounded-full px-3 py-1 text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-100">
+                          วันหยุดพิเศษ
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingHoliday(holiday)}
+                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
+                        >
+                          <Pencil className="h-4 w-4 text-slate-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(holiday.id)}
+                          className="h-8 w-8 rounded-lg hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Pagination */}
