@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -12,20 +13,12 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Eye, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Search, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { AddEmployeeDialog } from "./add-employee-dialog";
 import { EditEmployeeDialog } from "./edit-employee-dialog";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/lib/database.types";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 type Employee = Tables<"employees">;
 
@@ -69,7 +62,6 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -119,11 +111,6 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
   const filteredEmployees = useMemo(() => {
     let filtered = employees;
 
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((emp) => emp.status === statusFilter);
-    }
-
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -136,7 +123,7 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
     }
 
     return filtered;
-  }, [employees, searchQuery, statusFilter]);
+  }, [employees, searchQuery]);
 
   // Pagination
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
@@ -145,139 +132,155 @@ export function EmployeesList({ initialEmployees }: EmployeesListProps) {
     return filteredEmployees.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredEmployees, currentPage]);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
+  // Handler for search with page reset
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
     setCurrentPage(1);
-  }, [searchQuery, statusFilter]);
+  };
 
   return (
-    <div className="space-y-4">
-      {/* Header with Add Button */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-lg font-semibold">พนักงานทั้งหมด</h3>
-          <p className="text-sm text-muted-foreground">
-            แสดง {paginatedEmployees.length} จาก {filteredEmployees.length} คน
-          </p>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-10 w-10 rounded-xl bg-linear-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-lg shadow-slate-500/20">
+                <Users className="h-5 w-5 text-white" strokeWidth={2.5} />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">รายชื่อพนักงาน</h2>
+            </div>
+            <p className="text-sm text-gray-500 ml-13">
+              แสดง {paginatedEmployees.length} จาก {filteredEmployees.length} คน
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            
+            <Button
+              onClick={() => setIsAddOpen(true)}
+              className="gap-2 bg-linear-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 rounded-xl px-6 shadow-lg shadow-slate-500/20 text-white"
+            >
+              <Plus className="h-4 w-4 text-white" />
+              เพิ่มพนักงาน
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setIsAddOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          เพิ่มพนักงาน
-        </Button>
-      </div>
 
-      {/* Search and Filter Section */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="ค้นหาชื่อ, ชื่อเล่น, แผนก..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
+        {/* Search and Filter Section */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="ค้นหาชื่อ, แผนก..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-9 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white"
+            />
+          </div>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="สถานะทั้งหมด" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">สถานะทั้งหมด</SelectItem>
-            <SelectItem value="active">ทำงานอยู่</SelectItem>
-            <SelectItem value="inactive">พักงาน</SelectItem>
-            <SelectItem value="terminated">ออกจากงาน</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Table */}
-      <div className="rounded-lg shadow-md bg-white border-0 p-5">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ชื่อ-นามสกุล</TableHead>
-              <TableHead>ชื่อเล่น</TableHead>
-              <TableHead>วันเกิด</TableHead>
-              <TableHead>แผนก</TableHead>
-              <TableHead>วันเริ่มงาน</TableHead>
-              <TableHead>อายุงาน</TableHead>
-              <TableHead>สถานะ</TableHead>
-              <TableHead className="text-right">จัดการ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedEmployees.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                  {searchQuery || statusFilter !== "all"
-                    ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
-                    : "ยังไม่มีข้อมูลพนักงาน"}
-                </TableCell>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-2">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-gray-100 hover:bg-transparent">
+                <TableHead className="font-semibold text-gray-600 text-xs">ชื่อ-นามสกุล</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">แผนก</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">ชื่อเล่น</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">สถานะ</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">วันเริ่มงาน</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs">อายุงาน</TableHead>
+                <TableHead className="font-semibold text-gray-600 text-xs text-center">จัดการ</TableHead>
               </TableRow>
-            ) : (
-              paginatedEmployees.map((employee) => (
-                <TableRow key={employee.id}>
-                  <TableCell className="font-medium">{employee.full_name}</TableCell>
-                  <TableCell>{employee.nickname || "-"}</TableCell>
-                  <TableCell>
-                    {employee.birthday
-                      ? new Date(employee.birthday).toLocaleDateString("th-TH", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric"
-                        })
-                      : "-"}
-                  </TableCell>
-                  <TableCell>{employee.department || "-"}</TableCell>
-                  <TableCell>
-                    {new Date(employee.hire_date).toLocaleDateString("th-TH")}
-                  </TableCell>
-                  <TableCell className="font-medium text-blue-600">
-                    {calculateWorkDuration(employee.hire_date)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        employee.status === "active"
-                          ? "default"
-                          : employee.status === "inactive"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {employee.status === "active"
-                        ? "ทำงานอยู่"
-                        : employee.status === "inactive"
-                        ? "พักงาน"
-                        : "ออกจากงาน"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link href={`/dashboard/employees/${employee.id}`}>
-                      <Button variant="ghost" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingEmployee(employee)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(employee.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            </TableHeader>
+            <TableBody>
+              {paginatedEmployees.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-12 text-gray-400">
+                    {searchQuery
+                      ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
+                      : "ยังไม่มีข้อมูลพนักงาน"}
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                paginatedEmployees.map((employee, index) => (
+                  <TableRow
+                    key={employee.id}
+                    className={cn(
+                      "border-b border-gray-50 hover:bg-slate-50/50 transition-colors",
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                    )}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium text-gray-900">{employee.full_name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-gray-700">{employee.department || ""}</TableCell>
+                    <TableCell className="text-gray-700">{employee.nickname || "-"}</TableCell>
+                    <TableCell>
+                      <Badge
+                        className={cn(
+                          "rounded-full px-3 py-1 text-xs font-medium",
+                          employee.status === "active"
+                            ? "bg-green-100 text-green-700 hover:bg-green-100"
+                            : employee.status === "inactive"
+                            ? "bg-red-100 text-red-700 hover:bg-red-100"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-100"
+                        )}
+                      >
+                        {employee.status === "active"
+                          ? "Activated"
+                          : employee.status === "inactive"
+                          ? "Blocked"
+                          : "Deactivated"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-gray-600 text-sm">
+                      {new Date(employee.hire_date).toLocaleDateString("th-TH", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                      })}
+                    </TableCell>
+                    <TableCell className="text-gray-700 font-medium">
+                      {calculateWorkDuration(employee.hire_date)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
+                        >
+                          <Eye className="h-4 w-4 text-slate-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingEmployee(employee)}
+                          className="h-8 w-8 rounded-lg hover:bg-slate-50"
+                        >
+                          <Pencil className="h-4 w-4 text-slate-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(employee.id)}
+                          className="h-8 w-8 rounded-lg hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Pagination */}
